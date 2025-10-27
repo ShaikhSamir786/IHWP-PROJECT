@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prakriti Analysis - Discover Your Ayurvedic Constitution</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .progress-bar {
+            transition: width 0.5s ease;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .dosha-card {
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+        }
+        
+        .vata-border { border-color: #8B7355; }
+        .pitta-border { border-color: #DC2626; }
+        .kapha-border { border-color: #059669; }
+        
+        .radio-custom:checked + label {
+            background-color: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="gradient-bg text-white py-8 shadow-lg">
+        <div class="container mx-auto px-4">
+            <h1 class="text-4xl md:text-5xl font-bold text-center mb-2">🕉️ Prakriti Analysis</h1>
+            <p class="text-center text-lg opacity-90">Discover Your Unique Ayurvedic Constitution</p>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Welcome Screen -->
+        <div id="welcomeScreen" class="fade-in">
+            <div class="bg-white rounded-2xl shadow-xl p-8 md:p-12 card-hover">
+                <div class="text-center mb-8">
+                    <div class="text-6xl mb-4">🧘‍♀️</div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Welcome to Your Prakriti Journey</h2>
+                    <p class="text-gray-600 text-lg leading-relaxed">
+                        Understanding your Prakriti is the first step towards holistic well-being. 
+                        This comprehensive assessment will help you discover your unique mind-body constitution 
+                        based on the three doshas: Vata, Pitta, and Kapha.
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="text-center p-6 bg-amber-50 rounded-xl">
+                        <div class="text-4xl mb-3">🌪️</div>
+                        <h3 class="font-semibold text-amber-900 mb-2">Vata</h3>
+                        <p class="text-sm text-amber-800">Air & Space<br>Movement & Creativity</p>
+                    </div>
+                    <div class="text-center p-6 bg-red-50 rounded-xl">
+                        <div class="text-4xl mb-3">🔥</div>
+                        <h3 class="font-semibold text-red-900 mb-2">Pitta</h3>
+                        <p class="text-sm text-red-800">Fire & Water<br>Transformation & Intelligence</p>
+                    </div>
+                    <div class="text-center p-6 bg-green-50 rounded-xl">
+                        <div class="text-4xl mb-3">🌿</div>
+                        <h3 class="font-semibold text-green-900 mb-2">Kapha</h3>
+                        <p class="text-sm text-green-800">Earth & Water<br>Stability & Nourishment</p>
+                    </div>
+                </div>
+
+                <div class="bg-indigo-50 rounded-xl p-6 mb-8">
+                    <h3 class="font-semibold text-indigo-900 mb-3">📋 What to Expect:</h3>
+                    <ul class="space-y-2 text-indigo-800">
+                        <li class="flex items-start">
+                            <span class="mr-2">✓</span>
+                            <span>25 comprehensive questions covering physical, physiological, and psychological traits</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2">✓</span>
+                            <span>Detailed personalized report about your dominant Prakriti type</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2">✓</span>
+                            <span>Lifestyle recommendations for diet, exercise, and daily routine</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="mr-2">✓</span>
+                            <span>Insights to maintain balance and prevent imbalances</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <button onclick="startAssessment()" class="w-full gradient-bg text-white py-4 rounded-xl font-semibold text-lg hover:opacity-90 transition-opacity shadow-lg">
+                    Begin Your Assessment →
+                </button>
+            </div>
+        </div>
+
+        <!-- Questionnaire Screen -->
+        <div id="questionnaireScreen" class="hidden fade-in">
+            <!-- Progress Bar -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm font-semibold text-gray-700">Progress</span>
+                    <span class="text-sm font-semibold text-gray-700"><span id="currentQuestion">1</span> / <span id="totalQuestions">25</span></span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-3">
+                    <div id="progressBar" class="gradient-bg h-3 rounded-full progress-bar" style="width: 4%"></div>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="bg-white rounded-2xl shadow-xl p-8 mb-6">
+                <div class="mb-6">
+                    <span class="text-sm font-semibold text-indigo-600 uppercase tracking-wide" id="categoryLabel">Physical Attributes</span>
+                    <h3 class="text-2xl font-bold text-gray-800 mt-2" id="questionText"></h3>
+                </div>
+
+                <div id="optionsContainer" class="space-y-4">
+                    <!-- Options will be dynamically inserted here -->
+                </div>
+
+                <div class="flex gap-4 mt-8">
+                    <button id="prevBtn" onclick="previousQuestion()" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        ← Previous
+                    </button>
+                    <button id="nextBtn" onclick="nextQuestion()" class="flex-1 gradient-bg text-white py-3 rounded-xl font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed">
+                        Next →
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="resultsScreen" class="hidden fade-in">
+            <div class="bg-white rounded-2xl shadow-xl p-8 md:p-12">
+                <div class="text-center mb-8">
+                    <div class="text-6xl mb-4">✨</div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">Your Prakriti Analysis</h2>
+                    <p class="text-gray-600">Based on your responses, here's your unique constitution</p>
+                </div>
+
+                <!-- Dosha Scores -->
+                <div class="mb-10">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Dosha Distribution</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-semibold text-amber-900">🌪️ Vata</span>
+                                <span class="font-bold text-amber-900" id="vataScore">0%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-4">
+                                <div id="vataBar" class="bg-amber-600 h-4 rounded-full progress-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-semibold text-red-900">🔥 Pitta</span>
+                                <span class="font-bold text-red-900" id="pittaScore">0%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-4">
+                                <div id="pittaBar" class="bg-red-600 h-4 rounded-full progress-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="font-semibold text-green-900">🌿 Kapha</span>
+                                <span class="font-bold text-green-900" id="kaphaScore">0%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-4">
+                                <div id="kaphaBar" class="bg-green-600 h-4 rounded-full progress-bar" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Primary Prakriti Type -->
+                <div id="prakritiTypeCard" class="mb-8"></div>
+
+                <!-- Detailed Analysis Sections -->
+                <div id="detailedAnalysis" class="space-y-6"></div>
+
+                <div class="mt-8 text-center">
+                    <button onclick="restartAssessment()" class="gradient-bg text-white px-8 py-3 rounded-xl font-semibold hover:opacity-90 transition-opacity shadow-lg">
+                        Take Assessment Again
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Comprehensive Question Bank
+        const questions = [
+            {
+                category: "Physical Attributes",
+                question: "How would you describe your body frame?",
+                options: [
+                    { text: "Thin, light, hard to gain weight", dosha: "vata" },
+                    { text: "Medium, athletic, muscular", dosha: "pitta" },
+                    { text: "Heavy, solid, gains weight easily", dosha: "kapha" }
+                ]
+            },
+            {
+                category: "Physical Attributes",
+                question: "What is your skin texture like?",
+                options: [
+                    { text: "Dry, rough, cool to touch", dosha: "vata" },
+                    { text: "Warm, oily, prone to redness", dosha: "pitta" },
+                    { text: "Thick, smooth, well-moisturized", dosha: "kapha" }
+                ]
+            },
+            {
+                category: "Physical Attributes",
+                question: "How would you describe your hair?",
+                options: [
+                    { text: "Dry, thin, brittle", dosha: "vata" },
+                    { text: "Fine, oily, early graying", dosha: "pitta" },
+                    { text: "Thick, oily, lustrous", dosha: "kapha" }
+                ]
+            },
+            {
+                category: "Physical Attributes",
+                question: "What are your eyes like?",
+                options: [
+                    { text: "Small, dry, active", dosha: "vata" },
+                    { text: "Sharp, penetrating, light-sensitive", dosha: "pitta" },
+                    { text: "Large, calm, attractive", dosha: "kapha" }
+                ]
+            },
+            {
+                category: "Physical Attributes",
+                question: "How are your joints?",
+                options: [
+                    { text: "Thin, prominent, crack easily", dosha: "vata" },
+                    { text: "Medium, flexible", dosha: "pitta" },
+                    { text: "Large, well-lubricated, sturdy", dosha: "kapha" }
+                ]
+            },
+            {
+                category: "Physiological Traits",
+                question: "What is your appetite like?",
+                options: [
+                    { text: "Irregular, varies greatly", dosha: "vata" },
+                    { text: "Strong, cannot skip meals", dosha: "pitta" },
+                    { text: "Steady, can skip meals easily", dosha: "kapha" }
+                ]
+            },
+            {
+                category: "Physiological Traits",
+                question: "How is your digestion?",
+                options: [
+                    { text: "Irregular, gas and bloating", dosha: "vata" },
+                    { text: "Strong, quick, heat and acidity", dosha: "pitta" },
+                    { text: "Slow, heavy feeling after meals", dosha: "kapha" }
+                ]
+            },
+            {
+                category: "Physiological Traits",
+                question: "What is your thirst level?",
+                options: [
+                    { text: "Variable, often forget to drink", dosha: "vata" },
+                    { text: "Excessive, need cold drinks", dosha: "pitta" },
+                    { text: "Low, seldom feel thirsty", dosha: "kapha" }
+                ]
+            },
+            {
+                category: "Physiological Traits",
+                question: "What is your body temperature preference?",
+                options: [
+                    { text: "Prefer warmth, dislike cold", dosha: "vata" },
+                    { text: "Prefer cool, dislike heat", dosha: "pitta" },
+                    { text: "Adapt well to most temperatures", dosha: "kapha" }
+                ]
+            },
+            {
+                category: "Physiological Traits",
+                question: "How is your energy level throughout the day?",
+                options: [
+                    { text: "Comes in bursts, then depletes quickly", dosha: "vata" },
+                    { text: "High and consistent when fed", dosha: "pitta" },
+                    { text: "Steady and enduring", dosha: "kapha" }
+                ]
+            },
+            {
+                category: "Physiological Traits",
+                question: "What is your sleep pattern like?",
+                options: [
+                    { text: "Light, interrupted, restless", dosha: "vata" },
+                    { text: "Moderate, sound, short duration", dosha: "pitta" },
+                    { text: "Deep, long, hard to wake up", dosha: "kapha" }
+                ]
+            },
+            {
+                category: "Physiological Traits",
+                question: "How do you handle physical exertion?",
+                options: [
+                    { text: "Low endurance, tire quickly", dosha: "vata" },
+                    { text: "Moderate endurance, competitive", dosha: "pitta" },
+                    { text: "Good endurance, steady pace", dosha: "kapha" }
+                ]
+            },
+            {
+                category: "Physiological Traits",
+                question: "What is your resistance to illness?",
+                options: [
+                    { text: "Low immunity, frequent issues", dosha: "vata" },
+                    { text: "Moderate, prone to infections", dosha: "pitta" },
+                    { text: "Strong immunity, slow to get sick", dosha: "kapha" }
+                ]
+            },
+            {
+                category: "Psychological Tendencies",
+                question: "How would you describe your mental activity?",
+                options: [
+                    { text: "Quick, restless, many thoughts", dosha: "vata" },
+                    { text: "Sharp, focused, intelligent", dosha: "pitta" },
+                    { text: "Calm, steady, slower thinking", dosha: "kapha" }
+                ]
+            },
+            {
+                category: "Psychological Tendencies",
+                question: "What is your memory like?",
+                options: [
+                    { text: "Quick to learn, quick to forget", dosha: "vata" },
+                    { text: "Sharp, clear, organized", dosha: "pitta" },
+                    { text: "Slow to learn, but never forget", dosha: "kapha" }
+                ]
+            },
+            {
+                category: "Psychological Tendencies",
+                question: "How do you handle stress?",
+                options: [
+                    { text: "Anxious, worried, fearful", dosha: "vata" },
+                    { text: "Irritable, angry, impatient", dosha: "pitta" },
+                    { text: "Calm, withdrawn, avoidant", dosha: "kapha" }
+                ]
+            },
+            {
+                category: "Psychological Tendencies",
+                question: "What is your emotional nature?",
+                options: [
+                    { text: "Enthusiastic but changeable", dosha: "vata" },
+                    { text: "Intense, passionate, determined", dosha: "pitta" },
+                    { text: "Calm, loving, steady", dosha: "kapha" }
+                ]
+            },
+            {
+                category: "Psychological Tendencies",
+                question: "How do you make decisions?",
+                options: [
+                    { text: "Quickly, but often change mind", dosha: "vata" },
+                    { text: "Decisively with clear reasoning", dosha: "pitta" },
+                    { text: "Slowly after careful consideration", dosha: "kapha" }
+                ]
+            },
+            {
+                category: "Psychological Tendencies",
+                question: "What is your speech pattern?",
+                options: [
+                    { text: "Fast, talkative, rambling", dosha: "vata" },
+                    { text: "Sharp, precise, articulate", dosha: "pitta" },
+                    { text: "Slow, melodious, peaceful", dosha: "kapha" }
+                ]
+            },
+            {
+                category: "Psychological Tendencies",
+                question: "How do you approach work?",
+                options: [
+                    { text: "Creative, multitasking, scattered", dosha: "vata" },
+                    { text: "Focused, efficient, goal-oriented", dosha: "pitta" },
+                    { text: "Methodical, thorough, persistent", dosha: "kapha" }
+                ]
+            },
+            {
+                category: "Lifestyle Patterns",
+                question: "What is your spending habit?",
+                options: [
+                    { text: "Impulsive, spend on novelty", dosha: "vata" },
+                    { text: "Calculated, spend on quality", dosha: "pitta" },
+                    { text: "Saving-oriented, practical purchases", dosha: "kapha" }
+                ]
+            },
+            {
+                category: "Lifestyle Patterns",
+                question: "How do you handle routine?",
+                options: [
+                    { text: "Dislike routine, prefer variety", dosha: "vata" },
+                    { text: "Maintain routine when beneficial", dosha: "pitta" },
+                    { text: "Love routine and consistency", dosha: "kapha" }
+                ]
+            },
+            {
+                category: "Lifestyle Patterns",
+                question: "What is your walking pace?",
+                options: [
+                    { text: "Quick, light steps", dosha: "vata" },
+                    { text: "Moderate, purposeful", dosha: "pitta" },
+                    { text: "Slow, steady, graceful", dosha: "kapha" }
+                ]
+            },
+            {
+                category: "Lifestyle Patterns",
+                question: "How do you react to change?",
+                options: [
+                    { text: "Embrace it, seek it out", dosha: "vata" },
+                    { text: "Accept if it makes sense", dosha: "pitta" },
+                    { text: "Resist, prefer stability", dosha: "kapha" }
+                ]
+            },
+            {
+                category: "Lifestyle Patterns",
+                question: "What is your relationship with food?",
+                options: [
+                    { text: "Eat quickly, often forget meals", dosha: "vata" },
+                    { text: "Love eating, appreciate flavors", dosha: "pitta" },
+                    { text: "Eat slowly, emotional connection", dosha: "kapha" }
+                ]
+            }
+        ];
+
+        // State Management
+        let currentQuestionIndex = 0;
+        let answers = [];
+        let scores = { vata: 0, pitta: 0, kapha: 0 };
+
+        // Initialize
+        document.getElementById('totalQuestions').textContent = questions.length;
+
+        function startAssessment() {
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('questionnaireScreen').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            const q = questions[currentQuestionIndex];
+            document.getElementById('categoryLabel').textContent = q.category;
+            document.getElementById('questionText').textContent = q.question;
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = '';
+            
+            q.options.forEach((opt, idx) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'relative';
+                optionDiv.innerHTML = `
+                    <input type="radio" id="option${idx}" name="answer" value="${opt.dosha}" class="radio-custom absolute opacity-0">
+                    <label for="option${idx}" class="block p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-indigo-300 transition-all">
+                        ${opt.text}
+                    </label>
+                `;
+                container.appendChild(optionDiv);
+            });
+            
+            // Pre-select if already answered
+            if (answers[currentQuestionIndex]) {
+                const selectedInput = document.querySelector(`input[value="${answers[currentQuestionIndex]}"]`);
+                if (selectedInput) selectedInput.checked = true;
+            }
+            
+            updateButtons();
+            updateProgressBar();
+        }
+
+        function updateButtons() {
+            document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
+            const selected = document.querySelector('input[name="answer"]:checked');
+            document.getElementById('nextBtn').disabled = !selected;
+        }
+
+        function updateProgressBar() {
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function nextQuestion() {
+            const selected = document.querySelector('input[name="answer"]:checked');
+            if (!selected) return;
+            
+            answers[currentQuestionIndex] = selected.value;
+            
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                calculateResults();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+
+        document.addEventListener('change', (e) => {
+            if (e.target.name === 'answer') {
+                updateButtons();
+            }
+        });
+
+        function calculateResults() {
+            scores = { vata: 0, pitta: 0, kapha: 0 };
+            
+            answers.forEach(answer => {
+                scores[answer]++;
+            });
+            
+            const total = questions.length;
+            const percentages = {
+                vata: Math.round((scores.vata / total) * 100),
+                pitta: Math.round((scores.pitta / total) * 100),
+                kapha: Math.round((scores.kapha / total) * 100)
+            };
+            
+            showResults(percentages);
+        }
+
+        function showResults(percentages) {
+            document.getElementById('questionnaireScreen').classList.add('hidden');
+            document.getElementById('resultsScreen').classList.remove('hidden');
+            
+            // Update score displays
+            document.getElementById('vataScore').textContent = percentages.vata + '%';
+            document.getElementById('pittaScore').textContent = percentages.pitta + '%';
+            document.getElementById('kaphaScore').textContent = percentages.kapha + '%';
+            
+            // Animate bars
+            setTimeout(() => {
+                document.getElementById('vataBar').style.width = percentages.vata + '%';
+                document.getElementById('pittaBar').style.width = percentages.pitta + '%';
+                document.getElementById('kaphaBar').style.width = percentages.kapha + '%';
+            }, 100);
+            
+            // Determine dominant dosha
+            const dominant = Object.keys(percentages).reduce((a, b) => 
+                percentages[a] > percentages[b] ? a : b
+            );
+            
+            generateDetailedReport(dominant, percentages);
+        }
+
+        function generateDetailedReport(dominant, percentages) {
+            const doshaInfo = {
+                vata: {
+                    icon: '🌪️',
+                    color: 'amber',
+                    title: 'Vata Prakriti',
+                    subtitle: 'Air & Space Elements',
+                    description: 'You are creative, enthusiastic, and energetic. Vata types are quick-thinking, adaptable, and have a natural inclination towards movement and change.',
+                    strengths: ['Creative and imaginative', 'Quick learner', 'Enthusiastic and flexible', 'Excellent multitasker', 'Spiritually inclined'],
+                    vulnerabilities: ['Prone to anxiety and worry', 'Irregular digestion', 'Dry skin and hair', 'Tendency to overthink', 'Sleep disturbances'],
+                    diet: ['Favor warm, cooked, moist foods', 'Include healthy fats and oils', 'Sweet, sour, and salty tastes', 'Avoid raw, cold, and dry foods', 'Regular meal times'],
+                    lifestyle: ['Maintain regular routine', 'Adequate rest and sleep', 'Gentle exercises like yoga', 'Oil massage (Abhyanga)', 'Meditation and grounding practices'],
+                    balance: ['Stay warm and comfortable', 'Avoid excessive stimulation', 'Practice calming activities', 'Maintain social connections', 'Use warming essential oils']
+                },
+                pitta: {
+                    icon: '🔥',
+                    color: 'red',
+                    title: 'Pitta Prakriti',
+                    subtitle: 'Fire & Water Elements',
+                    description: 'You are intelligent, focused, and goal-oriented. Pitta types have strong leadership qualities, sharp intellect, and excellent organizational skills.',
+                    strengths: ['Sharp intellect and focus', 'Natural leaders', 'Strong digestion', 'Courageous and confident', 'Excellent problem-solvers'],
+                    vulnerabilities: ['Prone to anger and irritability', 'Skin inflammations', 'Acid reflux and heartburn', 'Excessive body heat', 'Tendency towards perfectionism'],
+                    diet: ['Favor cool, refreshing foods', 'Sweet, bitter, and astringent tastes', 'Avoid spicy and fried foods', 'Include cooling herbs', 'Moderate portions'],
+                    lifestyle: ['Avoid excessive heat', 'Moderate, cooling exercise', 'Relaxation techniques', 'Time in nature', 'Cultivate patience and compassion'],
+                    balance: ['Practice forgiveness', 'Avoid competitive stress', 'Stay cool physically', 'Engage in creative activities', 'Use cooling essential oils']
+                },
+                kapha: {
+                    icon: '🌿',
+                    color: 'green',
+                    title: 'Kapha Prakriti',
+                    subtitle: 'Earth & Water Elements',
+                    description: 'You are calm, nurturing, and stable. Kapha types have excellent endurance, loyalty, and a grounded presence that others find comforting.',
+                    strengths: ['Strong endurance and stamina', 'Compassionate and loving', 'Stable and reliable', 'Good long-term memory', 'Calm under pressure'],
+                    vulnerabilities: ['Weight gain tendency', 'Sluggish metabolism', 'Excess mucus and congestion', 'Lethargy and depression', 'Resistance to change'],
+                    diet: ['Light, warm, and dry foods', 'Pungent, bitter, and astringent tastes', 'Avoid heavy, oily foods', 'Reduce dairy and sweets', 'Stimulating spices'],
+                    lifestyle: ['Vigorous daily exercise', 'Early morning rising', 'Mental stimulation', 'Avoid daytime naps', 'Stay active and engaged'],
+                    balance: ['Seek variety and stimulation', 'Maintain active social life', 'Regular detoxification', 'Practice energizing activities', 'Use stimulating essential oils']
+                }
+            };
+            
+            const info = doshaInfo[dominant];
+            const typeCard = document.getElementById('prakritiTypeCard');
+            
+            typeCard.innerHTML = `
+                <div class="dosha-card ${info.color}-border bg-${info.color}-50 rounded-xl p-6 mb-6">
+                    <div class="flex items-center mb-4">
+                        <span class="text-5xl mr-4">${info.icon}</span>
+                        <div>
+                            <h3 class="text-2xl font-bold text-${info.color}-900">${info.title}</h3>
+                            <p class="text-${info.color}-700">${info.subtitle}</p>
+                        </div>
+                    </div>
+                    <p class="text-${info.color}-800 leading-relaxed">${info.description}</p>
+                </div>
+            `;
+            
+            const analysis = document.getElementById('detailedAnalysis');
+            analysis.innerHTML = `
+                <!-- Strengths -->
+                <div class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6">
+                    <h4 class="text-xl font-semibold text-green-900 mb-4 flex items-center">
+                        <span class="text-2xl mr-2">💪</span> Your Strengths
+                    </h4>
+                    <ul class="space-y-2 text-green-800">
+                        ${info.strengths.map(s => `<li class="flex items-start"><span class="mr-2">✓</span><span>${s}</span></li>`).join('')}
+                    </ul>
+                </div>
+
+                <!-- Vulnerabilities -->
+                <div class="bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl p-6">
+                    <h4 class="text-xl font-semibold text-orange-900 mb-4 flex items-center">
+                        <span class="text-2xl mr-2">⚠️</span> Areas to Watch
+                    </h4>
+                    <ul class="space-y-2 text-orange-800">
+                        ${info.vulnerabilities.map(v => `<li class="flex items-start"><span class="mr-2">•</span><span>${v}</span></li>`).join('')}
+                    </ul>
+                </div>
+
+                <!-- Diet Recommendations -->
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6">
+                    <h4 class="text-xl font-semibold text-blue-900 mb-4 flex items-center">
+                        <span class="text-2xl mr-2">🍽️</span> Dietary Guidelines
+                    </h4>
+                    <ul class="space-y-2 text-blue-800">
+                        ${info.diet.map(d => `<li class="flex items-start"><span class="mr-2">▸</span><span>${d}</span></li>`).join('')}
+                    </ul>
+                </div>
+
+                <!-- Lifestyle Recommendations -->
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6">
+                    <h4 class="text-xl font-semibold text-purple-900 mb-4 flex items-center">
+                        <span class="text-2xl mr-2">🧘</span> Lifestyle Practices
+                    </h4>
+                    <ul class="space-y-2 text-purple-800">
+                        ${info.lifestyle.map(l => `<li class="flex items-start"><span class="mr-2">▸</span><span>${l}</span></li>`).join('')}
+                    </ul>
+                </div>
+
+                <!-- Balance Tips -->
+                <div class="bg-gradient-to-r from-teal-50 to-cyan-50 rounded-xl p-6">
+                    <h4 class="text-xl font-semibold text-teal-900 mb-4 flex items-center">
+                        <span class="text-2xl mr-2">⚖️</span> Maintaining Balance
+                    </h4>
+                    <ul class="space-y-2 text-teal-800">
+                        ${info.balance.map(b => `<li class="flex items-start"><span class="mr-2">▸</span><span>${b}</span></li>`).join('')}
+                    </ul>
+                </div>
+
+                <!-- Vikruti Warning Signs -->
+                <div class="bg-gradient-to-r from-rose-50 to-red-50 rounded-xl p-6">
+                    <h4 class="text-xl font-semibold text-rose-900 mb-4 flex items-center">
+                        <span class="text-2xl mr-2">🔔</span> Early Signs of Imbalance (Vikruti)
+                    </h4>
+                    <p class="text-rose-800 mb-3">Watch for these warning signs that indicate your dosha may be out of balance:</p>
+                    ${generateVikrutiSigns(dominant)}
+                </div>
+
+                <!-- Dual or Triple Dosha Note -->
+                ${generateDualDoshaNote(percentages)}
+            `;
+        }
+
+        function generateVikrutiSigns(dosha) {
+            const signs = {
+                vata: [
+                    'Increased anxiety, restlessness, or worry',
+                    'Dry skin, constipation, or gas',
+                    'Difficulty sleeping or irregular sleep',
+                    'Cold hands and feet',
+                    'Difficulty concentrating or racing thoughts'
+                ],
+                pitta: [
+                    'Increased irritability, anger, or impatience',
+                    'Skin rashes, acne, or inflammation',
+                    'Heartburn, acid reflux, or loose stools',
+                    'Excessive body heat or sweating',
+                    'Critical or judgmental thinking'
+                ],
+                kapha: [
+                    'Feeling heavy, sluggish, or lethargic',
+                    'Weight gain or water retention',
+                    'Excessive mucus or congestion',
+                    'Depression or lack of motivation',
+                    'Difficulty waking up in the morning'
+                ]
+            };
+            
+            return `<ul class="space-y-2 text-rose-800">
+                ${signs[dosha].map(s => `<li class="flex items-start"><span class="mr-2">⚡</span><span>${s}</span></li>`).join('')}
+            </ul>`;
+        }
+
+        function generateDualDoshaNote(percentages) {
+            const sorted = Object.entries(percentages).sort((a, b) => b[1] - a[1]);
+            const diff = sorted[0][1] - sorted[1][1];
+            
+            if (diff < 15) {
+                const primary = sorted[0][0];
+                const secondary = sorted[1][0];
+                return `
+                    <div class="bg-gradient-to-r from-indigo-50 to-violet-50 rounded-xl p-6">
+                        <h4 class="text-xl font-semibold text-indigo-900 mb-4 flex items-center">
+                            <span class="text-2xl mr-2">🌟</span> Dual Dosha Constitution
+                        </h4>
+                        <p class="text-indigo-800 leading-relaxed">
+                            Your analysis shows a dual-dosha constitution with both <strong>${primary.charAt(0).toUpperCase() + primary.slice(1)}</strong> 
+                            and <strong>${secondary.charAt(0).toUpperCase() + secondary.slice(1)}</strong> prominent. This means you'll exhibit 
+                            characteristics of both doshas and should balance both in your lifestyle. Pay attention to seasonal changes, as different 
+                            doshas may become more dominant at different times of the year.
+                        </p>
+                    </div>
+                `;
+            }
+            return '';
+        }
+
+        function restartAssessment() {
+            currentQuestionIndex = 0;
+            answers = [];
+            scores = { vata: 0, pitta: 0, kapha: 0 };
+            
+            document.getElementById('resultsScreen').classList.add('hidden');
+            document.getElementById('welcomeScreen').classList.remove('hidden');
+            
+            // Reset bars
+            document.getElementById('vataBar').style.width = '0%';
+            document.getElementById('pittaBar').style.width = '0%';
+            document.getElementById('kaphaBar').style.width = '0%';
+        }
+    </script>
+
+    <!-- Footer -->
+    <footer class="text-center py-8 text-gray-600">
+        <p class="mb-2">🕉️ Based on Traditional Ayurvedic Principles</p>
+        <p class="text-sm">This assessment is for educational purposes. Consult an Ayurvedic practitioner for personalized guidance.</p>
+    </footer>
+</body>
+</html>
